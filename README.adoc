@@ -5,5 +5,5 @@ It uses Google Cloud Storage [2] to store information about the cluster members.
 
 
 
-[1] https://cloud.google.com
+[1] https://cloud.google.com +
 [2] https://cloud.google.com/storage/

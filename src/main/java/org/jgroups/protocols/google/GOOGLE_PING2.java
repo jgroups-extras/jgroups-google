@@ -1,5 +1,7 @@
 package org.jgroups.protocols.google;
 
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 import org.jgroups.Address;
 import org.jgroups.annotations.Property;
 import org.jgroups.protocols.FILE_PING;
@@ -16,18 +18,16 @@ import java.util.List;
 public class GOOGLE_PING2 extends FILE_PING {
 
     @Property(description="The name of the GCS server")
-    protected String host;
+    protected String host="https://www.googleapis.com";
 
-    @Property(description="The port at which the GCS server is listening")
-    protected int port;
-
-    @Property(description="Whether or not to use SSL to connect to host:port")
-    protected boolean use_ssl=true;
+    protected Storage store;
 
 
     @Override
     public void init() throws Exception {
         super.init();
+        store=StorageOptions.getDefaultInstance().getService();
+        System.out.println("store = " + store);
     }
 
 
