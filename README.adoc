@@ -23,15 +23,15 @@ by a different user):
 
 The object names under the bucket are all prefixed with the cluster name of the members, e.g.
 ----
-[belasmac] /$ gsutil ls gs://mybucket
+[mac] /$ gsutil ls gs://mybucket
 gs://mybucket/draw/
-[belasmac] /$ gsutil ls gs://mybucket/draw/
+[mac] /$ gsutil ls gs://mybucket/draw/
 gs://mybucket/draw/9ff66b4f-42b4-ac07-230b-537051e7f407.A.list
-[belasmac] /$ gsutil cat gs://mybucket/draw/9ff66b4f-42b4-ac07-230b-537051e7f407.A.list
+[mac] /$ gsutil cat gs://mybucket/draw/9ff66b4f-42b4-ac07-230b-537051e7f407.A.list
 B 	87545e44-01ef-4a4c-151c-d53e1a8e8f9f 	192.168.99.1:63246 	F
 A 	9ff66b4f-42b4-ac07-230b-537051e7f407 	192.168.99.1:55216 	T
 C 	9d7a097f-c4d9-fa06-c7ae-4f6e745634c6 	192.168.99.1:59441 	F
-[belasmac] /$
+[mac] /$
 ----
 
 The bucket name here is `mybucket`. There is currently one object `draw/9ff66b4f-42b4-ac07-230b-537051e7f407.A.list`
