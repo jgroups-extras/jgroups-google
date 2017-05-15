@@ -1,9 +1,72 @@
 = GOOGLE_PING2: discovery protocol for Google Cloud Platform
 
 `GOOGLE_PING2` is a discovery protocol for the Google Cloud Platform (GCP, [1]). 
-It uses Google Cloud Storage [2] to store information about the cluster members.
+It uses Google Cloud Storage (GCS, [2]) to store information about the cluster members.
+
+A typical use of this protocol is when running virtualized node in a JGroups cluster on GCP. In contrast,
+when running a number of docker containers on _Google Container Engine_ (GKE, [3]), `KUBE_PING` from
+the jgroups-kubernetes project [4] should be used instead.
+
+`GOOGLE_PING2` uses GCS to store information about all members, allowing new members wanting to join the cluster
+to fetch information about member addresses (UUIDs), associated physical IP addresses and logical names, determine
+the current coordinator and asking it to join the new member.
+
+The information is stored as objects in a bucket defined by attribute `location` (needs to be unique and not be owned
+by a different user):
+
+[source.xml]
+----
+<org.jgroups.protocols.google.GOOGLE_PING2
+    location="${google.bucket_name:pick-your-own-unique-bucketname}"
+/>
+----
+
+The object names under the bucket are all prefixed with the cluster name of the members, e.g.
+----
+[belasmac] /$ gsutil ls gs://mybucket
+gs://mybucket/draw/
+[belasmac] /$ gsutil ls gs://mybucket/draw/
+gs://mybucket/draw/9ff66b4f-42b4-ac07-230b-537051e7f407.A.list
+[belasmac] /$ gsutil cat gs://mybucket/draw/9ff66b4f-42b4-ac07-230b-537051e7f407.A.list
+B 	87545e44-01ef-4a4c-151c-d53e1a8e8f9f 	192.168.99.1:63246 	F
+A 	9ff66b4f-42b4-ac07-230b-537051e7f407 	192.168.99.1:55216 	T
+C 	9d7a097f-c4d9-fa06-c7ae-4f6e745634c6 	192.168.99.1:59441 	F
+[belasmac] /$
+----
+
+The bucket name here is `mybucket`. There is currently one object `draw/9ff66b4f-42b4-ac07-230b-537051e7f407.A.list`
+under this bucket. Note that `draw` is _not_ a folder (GCS doesn't have the concept of folders), but just the prefix
+part (cluster name) of object `9ff66b4f-42b4-ac07-230b-537051e7f407.A.list` created by member `A`.
+
+Dumping its contents, we can see that it contains information about 3 members, with `A` being the coordinator
+(consult [5] for details). When a new member joins cluster `draw` under bucket `mybucket`, it will first fetch the
+contents of this object, add it to its own logical / physical address cache and then send a JOIN frequest to coordiator
+`A` at address `192.168.99.1:55216`.
+
+
+=== Attributes
+The following attributes are recognized:
+
+.Attributes of `GOOGLE_PING2`
+[align="left",width="90%",cols="2,10",options="header"]
+|===============
+|Attribute name|Description
+
+|location | The bucket name. Needs to be globally unique, or else bucket creation will fail if the bucket does not
+            exist yet (or is owned by a different user). +
+            It is recommended to create a bucket first (e.g. via gsutil) and then use this bucket. This way,
+            an existing bucket of the same name created by a different user doesn't prevent startup of the member
+            due to an exception.
+|region | The region (`"eu"`, `"asia"`, `"us"`) where the bucket will be created. If non-null, the storage class
+          will be `multi-regional`, else `regional`. Default: null.
+|create_bucket_if_not_exists| If true (default), creates the bucket if it doesn't exist. If false, and the bucket
+doesn't exist, an exception will be thrown.
+|===============
 
 
 
 [1] https://cloud.google.com +
-[2] https://cloud.google.com/storage/
+[2] https://cloud.google.com/storage +
+[3] https://cloud.google.com/container-engine +
+[4] https://github.com/jgroups-extras/jgroups-kubernetes +
+[5] http://www.jgroups.org/manual4/index.html#DiscoveryProtocols
