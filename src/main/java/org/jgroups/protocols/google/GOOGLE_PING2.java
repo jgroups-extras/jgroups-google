@@ -64,7 +64,9 @@ public class GOOGLE_PING2 extends FILE_PING {
             BucketInfo info=region == null? BucketInfo.of(location)
               : BucketInfo.newBuilder(location).setStorageClass(StorageClass.REGIONAL).setLocation(this.region).build();
             bucket=store.create(info);
+            log.debug("created bucket %s", bucket.getName());
         }
+        log.debug("using bucket %s", bucket.getName());
     }
 
 
@@ -83,6 +85,8 @@ public class GOOGLE_PING2 extends FILE_PING {
             for(Blob blob: bucket.list(Storage.BlobListOption.prefix(clustername)).iterateAll()) {
                 String name=blob.getName();
                 if(name.endsWith(SUFFIX)) {
+                    if(log.isTraceEnabled())
+                        log.trace("%s: reading %s", local_addr, blob.getName());
                     byte[] contents=blob.getContent();
                     readResponse(contents, members, responses);
                 }
@@ -119,6 +123,8 @@ public class GOOGLE_PING2 extends FILE_PING {
     protected void write(List<PingData> list, String clustername) {
         String filename=addressToFilename(local_addr);
         String key=sanitize(clustername) + "/" + sanitize(filename);
+        if(log.isTraceEnabled())
+            log.trace("%s: writing %s", local_addr, key);
         try {
             ByteArrayOutputStream out=new ByteArrayOutputStream(4096);
             write(list, out);
@@ -138,8 +144,8 @@ public class GOOGLE_PING2 extends FILE_PING {
         try {
             BlobId obj=BlobId.of(location, key);
             boolean success=store.delete(obj);
-            if(log.isTraceEnabled())
-                log.trace("removed %s/%s, success: %b", location, key, success);
+            if(success && log.isTraceEnabled())
+                log.trace("%s: removed %s/%s", local_addr, location, key);
         }
         catch(Exception e) {
             log.error(Util.getMessage("FailureRemovingData"), e);
@@ -153,8 +159,9 @@ public class GOOGLE_PING2 extends FILE_PING {
 
         try {
             for(Blob blob: bucket.list(Storage.BlobListOption.prefix(clustername)).iterateAll()) {
-                String name=blob.getName();
-                if(name.endsWith(".list")) {
+                if(blob.getName().endsWith(".list")) {
+                    if(log.isTraceEnabled())
+                        log.trace("%s: deleting %s", local_addr, blob.getName());
                     blob.delete();
                 }
             }
@@ -172,9 +179,6 @@ public class GOOGLE_PING2 extends FILE_PING {
     protected static String sanitize(final String name) {
         return name.replace('/', '-').replace('\\', '-');
     }
-
-
-
 
 
 }
