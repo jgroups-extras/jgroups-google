@@ -50,7 +50,7 @@
         <version.jgroups>4.2.4.Final</version.jgroups>
         <version.oauth>20100527</version.oauth>
         <version.junit>4.13</version.junit>
-        <version.google.cloud>1.109.1</version.google.cloud>
+        <version.google.cloud>1.110.0</version.google.cloud>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
