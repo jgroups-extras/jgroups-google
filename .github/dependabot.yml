@@ -1,0 +1,26 @@
+version: 2
+updates:
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: com.google.cloud:google-cloud-storage
+    versions:
+    - "> 1.103.0, < 1.104"
+  - dependency-name: com.google.cloud:google-cloud-storage
+    versions:
+    - "> 1.105.0, < 1.106"
+  - dependency-name: com.google.cloud:google-cloud-storage
+    versions:
+    - ">= 1.106.a, < 1.107"
+  - dependency-name: com.google.cloud:google-cloud-storage
+    versions:
+    - "> 1.111.0, < 1.112"
+  - dependency-name: com.google.cloud:google-cloud-storage
+    versions:
+    - ">= 1.113.a, < 1.114"
+  - dependency-name: junit:junit
+    versions:
+    - "> 4.13, < 4.14"
