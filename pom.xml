@@ -45,7 +45,7 @@
     </scm>
 
     <properties>
-        <version.jgroups>5.2.9.Final</version.jgroups>
+        <version.jgroups>5.2.10.Final</version.jgroups>
         <version.oauth>20100527</version.oauth>
         <version.junit>4.13</version.junit>
         <version.google.cloud>2.15.0</version.google.cloud>
