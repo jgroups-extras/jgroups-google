@@ -48,7 +48,7 @@
         <version.jgroups>5.5.0.Final</version.jgroups>
         <version.oauth>20100527</version.oauth>
         <version.junit>4.13</version.junit>
-        <version.google.cloud>2.59.0</version.google.cloud>
+        <version.google.cloud>2.60.0</version.google.cloud>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
 
